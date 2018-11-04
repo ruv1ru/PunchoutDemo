@@ -39,6 +39,8 @@ namespace PunchoutWebsite.CXML
                     responseStatus = "Success";
                     resposeText = "OK";
                     responseCode = "200";
+
+                    startPageUrl = context.Request.Scheme + "://" + context.Request.Host.Value + "/start.cxml?token=" + GetCustomerToken();
                 }
 
 
@@ -67,6 +69,17 @@ namespace PunchoutWebsite.CXML
             await context.Response.WriteAsync
                          (responseDocument.ToString());
 
+        }
+
+        /// <summary>
+        /// Gets the unique customer token of specific user who is punching in to the system.
+        /// This is a unique value that is generated on each succesfull setup request
+        /// </summary>
+        /// <returns>The customer token.</returns>
+        string GetCustomerToken()
+        {
+            //return Guid.NewGuid();
+            return "7d92c2ed-32ae-4bd4-9453-1a337bd7cb33";
         }
 
         string GetSenderSharedSecretFromRequest(XElement cXml)
