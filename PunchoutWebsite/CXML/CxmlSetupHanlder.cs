@@ -34,13 +34,17 @@ namespace PunchoutWebsite.CXML
 
                 XElement cXml = document.Element("cXML");
 
-                if (GetSenderSharedSecretFromRequest(cXml) == GetSenderSharedSecretFromDatabase())
+                if (GetSenderSharedSecretFromRequest(cXml) == PunchoutUserService.GetUserSharedSecret())
                 {
                     responseStatus = "Success";
                     resposeText = "OK";
                     responseCode = "200";
 
-                    startPageUrl = context.Request.Scheme + "://" + context.Request.Host.Value + "/start.cxml?token=" + GetCustomerToken();
+                    startPageUrl = context.Request.Scheme + "://" + context.Request.Host.Value + "/home?token=" + PunchoutUserService.GetUserToken();
+
+                    var url = GetProcurementSystemPostUrlFromRequest(cXml);
+                    PunchoutUserService.SaveProcurementSystemPostUrl(GetProcurementSystemPostUrlFromRequest(cXml));
+
                 }
 
 
@@ -71,31 +75,32 @@ namespace PunchoutWebsite.CXML
 
         }
 
+
         /// <summary>
-        /// Gets the unique customer token of specific user who is punching in to the system.
-        /// This is a unique value that is generated on each succesfull setup request
+        /// Gets the procurement system post URL from request. This is the URL that is used later on when user checkout from this system 
+        /// All the cart details will be posted in xml format (via a hidden field) into the POST method referred by this URL
         /// </summary>
-        /// <returns>The customer token.</returns>
-        string GetCustomerToken()
+        /// <returns>The procurement system post URL from request.</returns>
+        /// <param name="cXml">root Cxml element</param>
+        string GetProcurementSystemPostUrlFromRequest(XElement cXml)
         {
-            //return Guid.NewGuid();
-            return "7d92c2ed-32ae-4bd4-9453-1a337bd7cb33";
+            return cXml.Element("Request").Element("PunchOutSetupRequest").Element("BrowserFormPost").Element("URL").Value;
         }
 
+        /// <summary>
+        /// Sender element of the request body allows the receiving party to identify and authenticate the party that opened the HTTP connection. 
+        /// It contains a stronger authentication Credential than the ones in the From or To elements, because the receiving
+        /// party must authenticate who is asking it to perform work
+        /// </summary>
+        /// <returns>The sender shared secret from request.</returns>
+        /// <param name="cXml">root Cxml element</param>
         string GetSenderSharedSecretFromRequest(XElement cXml)
         {
-            //Sender element of the request body allows the receiving party to identify and authenticate the party that opened the HTTP connection. 
-            //It contains a stronger authentication Credential than the ones in the From or To elements, because the receiving
-            //party must authenticate who is asking it to perform work
-
+            
             //The SharedSecret element is used when the Sender has a password that the requester recognizes.
             return cXml.Element("Header").Element("Sender").Element("Credential").Element("SharedSecret").Value;
         }
 
-        string GetSenderSharedSecretFromDatabase()
-        {
-            //SharedSecret is can be securely stored in database or using any other repository
-            return "abracadabra";
-        }
+
     }
 }

@@ -1,0 +1,38 @@
+﻿@model PunchoutWebsite.Models.CartModel
+
+
+<form asp-controller="Cart" asp-action="Checkout" method="post">
+
+    <div class="row table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SKU</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Sku</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</form>
+
+<FORM id="PunchoutReturnForm" METHOD="POST" ACTION="@Model.BrowserFormPostUrl">
+    <INPUT TYPE="HIDDEN" NAME="cXML-urlencoded" VALUE="@Model.PunchOutCartDetails">
+    <INPUT TYPE="SUBMIT" VALUE="Checkout">
+</FORM>
+
