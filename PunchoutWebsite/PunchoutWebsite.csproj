@@ -12,10 +12,14 @@
     <Folder Include="Views\Home\" />
     <Folder Include="Views\Cart\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\OciCart\" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Views\Cart\OciIndex.cshtml" />
+  </ItemGroup>
 </Project>

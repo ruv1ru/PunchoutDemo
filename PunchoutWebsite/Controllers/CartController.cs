@@ -7,24 +7,27 @@ using PunchoutWebsite.Models;
 
 namespace PunchoutWebsite.Controllers
 {
-    public class CartController : Controller
+    public class CartController : BaseController
     {
+
         public IActionResult Index()
         {
             var userCart = GetCartForLoggedInUser();
 
-            userCart.PunchOutCartDetails = GetPunchoutCartDetails(userCart);
+            userCart.PunchOutCartDetails = GetPunchoutCxmlCartDetails(userCart);
             userCart.BrowserFormPostUrl = PunchoutUserService.GetProcurementSystemPostUrl();
 
 
             return View(userCart);
         }
+
+
         /// <summary>
         /// Gets the punchout cart details in XML format to be sent to procurement system.
         /// </summary>
         /// <returns>The punchout cart details.</returns>
         /// <param name="userCart">User cart.</param>
-        string GetPunchoutCartDetails(CartModel userCart)
+        string GetPunchoutCxmlCartDetails(CartModel userCart)
         {
 
             var xmlString = string.Empty;
@@ -47,7 +50,7 @@ namespace PunchoutWebsite.Controllers
 
             foreach (var item in cartItems)
             {
-                
+
                 orderMessage.Add(new XElement("ItemIn", new XAttribute("quantity", item.Quantity),
                     new XAttribute("lineNumber", lineNumber),
                     new XElement("ItemID",
@@ -118,7 +121,7 @@ namespace PunchoutWebsite.Controllers
                                               //AribaNetworkId, which is specified by Credential domain.The SharedSecret is the supplier's password or login to the PunchOut site
                 new XElement("Identity", "techadmin@procit.com.au"), new XElement("SharedSecret", PunchoutUserService.GetUserSharedSecret())), // To-do get dynamic values for ID from client
                 new XElement("UserAgent", "Procurement IT")) // A unique identifier for the application sending the PunchOutSetupRequest. Consists of the software company
-                                                                   //name, product name, and version.Version details can appear in parentheses.
+                                                             //name, product name, and version.Version details can appear in parentheses.
                 );
 
 
@@ -143,19 +146,5 @@ namespace PunchoutWebsite.Controllers
 
         }
 
-        CartModel GetCartForLoggedInUser()
-        {
-            // Return cart items added selected by user in the product catalog page
-
-            return new CartModel
-            {
-                CartItems = new List<CartItemModel>
-                {
-                    new CartItemModel { Id = 1, Quantity = 2, Sku = "SKU88765", UnitPrice = 10.25m, Description = "sample product 1" },
-                    new CartItemModel { Id = 2, Quantity = 5, Sku = "SKU88900", UnitPrice = 25.55m, Description = "sample product 2" }
-                }
-            };
-
-        }
     }
 }

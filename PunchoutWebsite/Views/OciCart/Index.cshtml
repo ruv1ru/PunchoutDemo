@@ -1,0 +1,58 @@
+﻿@model PunchoutWebsite.Models.CartModel
+
+
+<form asp-controller="Cart" asp-action="Checkout" method="post">
+
+    <div class="row table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>SKU</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.CartItems)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Sku</td>
+                    <td>@item.Description</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.UnitPrice</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+</form>
+
+
+
+
+<form id="PunchoutReturnForm" action="@Model.BrowserFormPostUrl" method="post" target="_top">
+
+    <input type="hidden" name="~OkCode" value="ADDI">
+    <input type="hidden" name="~target" value="_top">
+    <input type="hidden" name="~CALLER" value="CTLG">
+
+
+    @foreach (var ocItem in Model.PunchOutOciOrderItems)
+    {
+        @:<input type="hidden" name="@ocItem.DescriptionInputName" value="@ocItem.Description">
+        @:<input type="hidden" name="@ocItem.ProductCodeInputName" value="@ocItem.ProductCode">
+        @:<input type="hidden" name="@ocItem.QuantityInputName" value="@ocItem.Quantity">
+        @:<input type="hidden" name="@ocItem.PriceInputName" value="@ocItem.Price">
+
+    }
+
+    <center>
+        <INPUT id="btnReturnCart" TYPE="SUBMIT" VALUE="Checkout">
+        <br>
+    </center>
+</form>
+
